@@ -1,0 +1,8 @@
+[package]
+name = "rust_version"
+version = "0.1.0"
+authors = ["Mehdi Saedi <mehdi.saedi@live.com>"]
+
+[dependencies]
+calamine = "0.14.7"
+rusty-machine = "0.5.4"

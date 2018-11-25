@@ -1,0 +1,5 @@
+*.d.ts
+.vscode/
+.idea/
+
+/rust_version/target/*
