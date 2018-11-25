@@ -1,7 +1,7 @@
 extern crate calamine;
 extern crate rusty_machine;
 
-use calamine::{open_workbook, Xlsx, Reader,DataType};
+use calamine::{open_workbook, Xlsx, Reader, DataType};
 use rusty_machine::learning::nnet::{NeuralNet, BCECriterion};
 use rusty_machine::learning::toolkit::regularization::Regularization;
 use rusty_machine::learning::optim::grad_desc::StochasticGD;
@@ -13,15 +13,16 @@ fn main() {
 
     if let Some(Ok(r)) = excel.worksheet_range("diabetes") {
         for row in r.rows().skip(1) {
-
-
-            let mut data_array :Vec<f64> = Vec::new();
+            let mut data_array: Vec<f64> = Vec::new();
 
             for (_i, c) in row.iter().enumerate() {
                 match *c {
                     DataType::Float(ref f) => data_array.push(*f),
                     _ => (),
                 };
+
+                let inputs = Matrix::new(1, 8, &data_array[0..7]);
+                let targets = Matrix::new(1, 1, &data_array[8..]);
             };
 
 //                let data:&[f64] = &data_array[0..7];
@@ -32,12 +33,9 @@ fn main() {
 
             //start NN
 
-            let inputs = Matrix::new(1,8, &data_array[0..7]);
-            let targets = Matrix::new(1,1,  &data_array[8..]);
-
 
             // Set the layer sizes - from input to output
-            let layers = &[3,5,11,7,3];
+            let layers = &[3, 5, 11, 7, 3];
 
             // Choose the BCE criterion with L2 regularization (`lambda=0.1`).
             let criterion = BCECriterion::new(Regularization::L2(0.1));
@@ -48,13 +46,12 @@ fn main() {
             // rain the model!
             model.train(&inputs, &targets).unwrap();
 
-            let test_inputs = Matrix::new(1,8, vec![1.0,93.0,70.0,31.0,0.0,30.4,0.315,23.0]);
+            let test_inputs = Matrix::new(1, 8, vec![1.0, 93.0, 70.0, 31.0, 0.0, 30.4, 0.315, 23.0]);
 
             // And predict new output from the test inputs
             let outputs = model.predict(&test_inputs).unwrap();
 
-            println!("output:{:?}",outputs)
-
+            println!("output:{:?}", outputs)
         }
     }
 }
